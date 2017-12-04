@@ -1,0 +1,65 @@
+---
+title: "Normal vs. T Student Distribution Probabilities"
+author: "Luis Padua"
+date: "December 3, 2017"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+```
+
+## Objective
+
+This is a presentation to describe the Shiny application done by Luis Padua as part of the final project of course **Developing Data Products** by Coursera and John Hopkins University.  
+You can access the app by <https://luispadua.shinyapps.io/normaltdistributions/>.
+
+The basic idea of the app is to present the differences between Normal and T-Student probability distributions. Given a certain dataset that the user will enter one by one, the application will show how a Normal and T-Student distributions will fit to this data.
+
+Then the user can also check the probability of a given number (from a Slider input) for each distribution.
+
+## Interactions with the User
+
+Inputs: 
+
+- Text Input: where the user can type new numbers to be added in the sample
+- Add Data: where the user clicks to add the number on Text input to the sample
+- Clear Data: where the user clear the sample
+- Slider: where the user will select a number between -5sigma to 5sigma of the sample
+- Type Radio button: where the user selects if he wants probability of greater or lesser than slider input  
+
+## Interactions with the User
+
+Outputs:  
+
+- Calculated Mean
+- Calculated Standard Deviation
+- Number of Samples (Degrees of Freedom)
+- Probability of Normal Distribution
+- Probability of T Student Distribution
+
+## Example of Sample of 10 numbers
+
+With we have a sample of 10 numbers with mean = 0 and standard deviation = 1. The two distributions would be:  
+
+```{r sample, echo = FALSE}
+tFun <- function(x) {dt(x - 0, 10)}
+p1 <- ggplot(data = data.frame(x = c(-5, 5)), aes(x)) +
+                        stat_function(fun = dnorm, n = 101, 
+                                      args = list(mean = 0, sd = 1), 
+                                      aes(colour = "Normal"), size = 1.5) +
+                        stat_function(fun = tFun, aes(colour = "T Student"), size = 1.5) +
+                        scale_colour_manual("Distributions", values = c("deeppink", "dodgerblue3")) +
+                        scale_x_continuous(name = "Entries") +
+                        scale_y_continuous(name = "Frequency", breaks = NULL) +
+                        geom_vline(xintercept = 2, color = "red", size=1.5)
+p1
+
+valueN <- pnorm(2, mean = 0, sd = 1, lower.tail = FALSE)
+valueT <- pt(2, df = 10, lower.tail = FALSE)
+```
+
+See the redline on x = 2, the probability of have a greater than 2 by normal is `r valueN`.  
+And also, the probability of have a greater than 2 by T Student is `r valueT`.
+
